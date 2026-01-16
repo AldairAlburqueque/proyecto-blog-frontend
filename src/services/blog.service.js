@@ -53,3 +53,8 @@ export const searchBlogs = async (query) => {
   const response = await api.get(`/blog/search?title=${query}`);
   return response.data;
 };
+
+export const blogMe = async () => {
+  const response = await api.get(`/blog/me`);
+  return response.data;
+};

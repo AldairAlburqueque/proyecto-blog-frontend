@@ -44,7 +44,7 @@ const BlogCard = ({ post, onDeleted }) => {
         </p>
 
         <div className="mt-4 flex items-center justify-between">
-         <span className="text-xs text-gray-500">
+        <span className="text-xs text-gray-500">
   {post.user?.name}
 </span>
 
