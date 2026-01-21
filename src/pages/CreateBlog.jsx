@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { createBlog, getBlogById, updateBlog } from '../services/blog.service';
-import { getAllCategories } from '../services/category.service';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { createBlog, getBlogById, updateBlog } from "../services/blog.service";
+import { getAllCategories } from "../services/category.service";
 
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
 
 const CreateBlog = () => {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    categoryId: ''
+    title: "",
+    content: "",
+    categoryId: "",
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = !!id;
 
   useEffect(() => {
     if (!user) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
@@ -30,25 +30,28 @@ const CreateBlog = () => {
       try {
         const categoriesData = await getAllCategories();
         setCategories(categoriesData);
-        
+
         if (isEditing) {
-  const blogData = await getBlogById(id);
+          const blogData = await getBlogById(id);
 
-  const isOwner = blogData.user?.idUser === user.idUser;
+          const isOwner = blogData.user?.idUser === user.idUser;
 
-  if (!isOwner) {
-    alert("You are not authorized to edit this blog.");
-    navigate('/');
-    return;
-  }
+          if (!isOwner) {
+            alert("You are not authorized to edit this blog.");
+            navigate("/");
+            return;
+          }
 
-  setFormData({
-    title: blogData.title,
-    content: blogData.content,
-    categoryId: blogData.category?.idCategory || ''
-  });
-} else if (categoriesData.length > 0) {
-          setFormData(prev => ({ ...prev, categoryId: categoriesData[0].idCategory }));
+          setFormData({
+            title: blogData.title,
+            content: blogData.content,
+            categoryId: blogData.category?.idCategory || "",
+          });
+        } else if (categoriesData.length > 0) {
+          setFormData((prev) => ({
+            ...prev,
+            categoryId: categoriesData[0].idCategory,
+          }));
         }
       } catch (err) {
         console.error("Error fetching data", err);
@@ -63,14 +66,14 @@ const CreateBlog = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       if (isEditing) {
@@ -78,10 +81,12 @@ const CreateBlog = () => {
       } else {
         await createBlog(formData);
       }
-      navigate('/');
+      navigate("/");
     } catch (err) {
       console.error(err);
-      setError(`Failed to ${isEditing ? 'update' : 'create'} blog. Please try again.`);
+      setError(
+        `Failed to ${isEditing ? "update" : "create"} blog. Please try again.`,
+      );
     } finally {
       setLoading(false);
     }
@@ -94,19 +99,25 @@ const CreateBlog = () => {
       <div className="bg-white shadow sm:rounded-lg overflow-hidden">
         <div className="px-4 py-5 sm:px-6">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-            {isEditing ? 'Edit Blog Post' : 'Create New Blog Post'}
+            {isEditing ? "Edit Blog Post" : "Create New Blog Post"}
           </h2>
         </div>
         <div className="border-t border-gray-200 px-4 py-5 sm:p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <div
+                className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                role="alert"
+              >
                 <span className="block sm:inline">{error}</span>
               </div>
             )}
 
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Title
               </label>
               <div className="mt-1">
@@ -123,7 +134,10 @@ const CreateBlog = () => {
             </div>
 
             <div>
-              <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="categoryId"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Category
               </label>
               <div className="mt-1">
@@ -135,9 +149,14 @@ const CreateBlog = () => {
                   value={formData.categoryId}
                   onChange={handleChange}
                 >
-                  <option value="" disabled>Select a category</option>
+                  <option value="" disabled>
+                    Select a category
+                  </option>
                   {categories.map((category) => (
-                    <option key={category.idCategory} value={category.idCategory}>
+                    <option
+                      key={category.idCategory}
+                      value={category.idCategory}
+                    >
                       {category.categoria}
                     </option>
                   ))}
@@ -146,7 +165,10 @@ const CreateBlog = () => {
             </div>
 
             <div>
-              <label htmlFor="content" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="content"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Content
               </label>
               <div className="mt-1">
@@ -173,9 +195,13 @@ const CreateBlog = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
+                className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${loading ? "opacity-75 cursor-not-allowed" : ""}`}
               >
-                {loading ? 'Saving...' : (isEditing ? 'Update Post' : 'Publish Post')}
+                {loading
+                  ? "Saving..."
+                  : isEditing
+                    ? "Update Post"
+                    : "Publish Post"}
               </button>
             </div>
           </form>
